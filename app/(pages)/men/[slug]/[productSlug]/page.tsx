@@ -1,204 +1,121 @@
 "use client";
-import Image from 'next/image';
-import React from 'react'
-import { MdOutlineStarPurple500 } from 'react-icons/md';
-import Slider from "react-slick";
+import Image from 'next/image'
+import Link from 'next/link'
+import React, { useState } from 'react'
+import { tshirt } from "./tshirt"
+import { MdOutlineStarPurple500 } from "react-icons/md";
 
 function page() {
-    const settings = {
-        dots: false,
-        infinite: true,
-        speed: 500,
-        slidesToShow: 1,
-        slidesToScroll: 1,
-        autoplay: true,
-        autoplaySpeed: 2000,
+
+    const [tshirtData, setTshirtData] = useState<any[]>([]);
+
+    const fetchTshirtData = async () => {
+        try {
+            const response = await fetch('/api/product-upload');
+            const data = await response.json();
+            setTshirtData(data);
+        } catch (error) {
+            console.error("Error fetching t-shirt data:", error);
+        }
     };
+
+    console.log("Fetched T-shirt Data:", tshirtData);
+
+    React.useEffect(() => {
+        fetchTshirtData();
+    }, []);
+
     return (
-        <div className='pad100 productPageSection'>
-            <div className="container">
-                <div className="detailspageSection">
-                    <div className="sliderSection">
-                        <Slider {...settings}>
-                            <div>
-                                <div className="sliderImg">
-                                    <Image src="/images/tshirt/tshirt1.webp" alt='tshirt' width={500} height={500} />
+        <div className='padt10'>
+            <div className='container'>
+                <div className="mainTitle">
+                    <h6>Men T-shirts - <span className='normal'>263564 items</span></h6>
+                </div>
+                <div className="allCategoriesSection">
+                    <div className="filterSideBar">
+                        <h5 className='titleText'>Filter</h5>
+                        <div className="filterCategories">
+                            <h6>Categories</h6>
+                            <div className="checkboxField">
+                                <div className="checkboxInput">
+                                    <input type="checkbox" name="categories" id="tshirt" />
+                                    <label htmlFor="tshirt">Tshirts(262061)</label>
                                 </div>
-                            </div>
-                            <div>
-                                <div className="sliderImg">
-                                    <Image src="/images/tshirt/tshirt2.webp" alt='tshirt' width={500} height={500} />
-                                </div>
-                            </div>
-                            <div>
-                                <div className="sliderImg">
-                                    <Image src="/images/tshirt/tshirt3.webp" alt='tshirt' width={500} height={500} />
-                                </div>
-                            </div>
-                            <div>
-                                <div className="sliderImg">
-                                    <Image src="/images/tshirt/tshirt4.webp" alt='tshirt' width={500} height={500} />
-                                </div>
-                            </div>
-                            <div>
-                                <div className="sliderImg">
-                                    <Image src="/images/tshirt/tshirt5.webp" alt='tshirt' width={500} height={500} />
-                                </div>
-                            </div>
-                        </Slider>
-                    </div>
-
-                    <div className="pageDetails">
-                        <div className="productDetailsPage">
-                            <div className="productInfo">
-
-                                <h2 className="brand">U.S. Polo Assn.</h2>
-                                <p className="title">Men Pure Cotton Comfort Fit Lounge T-Shirt</p>
-
-                                <div className="ratingBox">
-                                    <span>4.4 ★</span>
-                                    <span className="divider"></span>
-                                    <span className="ratings">198 Ratings</span>
-                                </div>
-
-                                <hr />
-
-                                <div className="priceBox">
-                                    <span className="price">₹806</span>
-                                    <span className="mrp">₹849</span>
-                                    <span className="discount">(5% OFF)</span>
-                                </div>
-
-                                <p className="tax">inclusive of all taxes</p>
-
-                                <h4 className="sectionTitle">MORE COLORS</h4>
-                                <div className="colors">
-                                    <img src="/images/tshirt/tshirt1.webp" />
-                                    <img src="/images/tshirt/tshirt2.webp" />
-                                    <img src="/images/tshirt/tshirt3.webp" />
-                                </div>
-
-                                <div className="sizeHeader">
-                                    <h5>SELECT SIZE</h5>
-                                    <span className="sizeChart">SIZE CHART </span>
-                                </div>
-
-                                <div className="sizes">
-                                    <button>S<br /><span>Rs. 806</span></button>
-                                    <button className="active">M<br /><span>Rs. 806</span></button>
-                                    <button>L<br /><span>Rs. 806</span></button>
-                                    <button>XL<br /><span>Rs. 806</span></button>
-                                    <button>XXL<br /><span>Rs. 807</span></button>
-                                </div>
-
-                                <div className="actions">
-                                    <button className="addToBag">ADD TO BAG</button>
-                                    <button className="wishlist">♡ WISHLIST</button>
-                                </div>
-
-                                <hr />
-
-                                <div className="seller">
-                                    <p>₹ 806 <span className="strike">₹ 849</span> <span className="discount">(5% OFF)</span></p>
-                                    <p>Seller: <span className="sellerName">Supercom Net</span></p>
-                                    <p className="moreSeller">1 more seller available</p>
-                                </div>
-
-                                <div className="delivery">
-                                    <h4>DELIVERY OPTIONS</h4>
-                                    <div className="pincodeBox">
-                                        <input type="text" placeholder="Enter pincode" />
-                                        <button>Check</button>
-                                    </div>
-                                    <p className="note">
-                                        Please enter PIN code to check delivery time & Pay on Delivery Availability
-                                    </p>
-                                </div>
-
-                            </div>
-                            <hr />
-                            <div className="productDetailsSection">
-                                <div className="productDetailsContainer">
-
-                                    <h3 className="heading">
-                                        PRODUCT DETAILS <span className="icon">📋</span>
-                                    </h3>
-
-                                    <p className="description">
-                                        Teal-green solid lounge t-shirt, has a round neck and short sleeves with slip-on closure
-                                    </p>
-
-                                    <div className="block">
-                                        <h4>Size & Fit</h4>
-                                        <p>The model (height 6') is wearing a size M</p>
-                                    </div>
-
-                                    <div className="block">
-                                        <h4>Material & Care</h4>
-                                        <p>100% Cotton</p>
-                                        <p>Machine wash</p>
-                                    </div>
-
-                                    <div className="block">
-                                        <h4>Specifications</h4>
-
-                                        <div className="specGrid">
-
-                                            <div className="specItem">
-                                                <span>Fabric</span>
-                                                <p>Cotton</p>
-                                            </div>
-
-                                            <div className="specItem">
-                                                <span>Neck</span>
-                                                <p>Round Neck</p>
-                                            </div>
-
-                                            <div className="specItem">
-                                                <span>Net Quantity</span>
-                                                <p>1</p>
-                                            </div>
-
-                                            <div className="specItem">
-                                                <span>Net Quantity Unit</span>
-                                                <p>Piece</p>
-                                            </div>
-
-                                            <div className="specItem">
-                                                <span>Pattern</span>
-                                                <p>Solid</p>
-                                            </div>
-
-                                            <div className="specItem">
-                                                <span>Sleeve Length</span>
-                                                <p>Short Sleeves</p>
-                                            </div>
-
-                                            <div className="specItem">
-                                                <span>Sustainable</span>
-                                                <p>Regular</p>
-                                            </div>
-
-                                            <div className="specItem">
-                                                <span>Type</span>
-                                                <p>Regular</p>
-                                            </div>
-
-                                            <div className="specItem">
-                                                <span>Wash Care</span>
-                                                <p>Machine Wash</p>
-                                            </div>
-
-                                        </div>
-                                    </div>
-
+                                <div className="checkboxInput">
+                                    <input type="checkbox" name="categories" id="longeTshirt" />
+                                    <label htmlFor="longeTshirt">Lounge Tshirts(1530)</label>
                                 </div>
                             </div>
                         </div>
-
-
-
+                        <div className="filterCategories">
+                            <h6>Brand</h6>
+                            <div className="checkboxField">
+                                <div className="checkboxInput">
+                                    <input type="checkbox" name="brand" id="woostro" />
+                                    <label htmlFor="woostro">WOOSTRO(9437)</label>
+                                </div>
+                                <div className="checkboxInput">
+                                    <input type="checkbox" name="brand" id="brand2" />
+                                    <label htmlFor="brand2">Moda Rapido(7190)</label>
+                                </div>
+                                <div className="checkboxInput">
+                                    <input type="checkbox" name="brand" id="brand3" />
+                                    <label htmlFor="brand3">SZN(5809)</label>
+                                </div>
+                                <div className="checkboxInput">
+                                    <input type="checkbox" name="brand" id="brand4" />
+                                    <label htmlFor="brand4">Seekbuylove(5067)</label>
+                                </div>
+                                <div className="checkboxInput">
+                                    <input type="checkbox" name="brand" id="brand5" />
+                                    <label htmlFor="brand5">Roadster(4546)</label>
+                                </div>
+                                <div className="checkboxInput">
+                                    <input type="checkbox" name="brand" id="brand6" />
+                                    <label htmlFor="brand6">HRX by Hrithik Roshan(4145)</label>
+                                </div>
+                                <div className="checkboxInput">
+                                    <input type="checkbox" name="brand" id="brand7" />
+                                    <label htmlFor="brand7">Tommy Hilfiger(4095)</label>
+                                </div>
+                                <div className="checkboxInput">
+                                    <input type="checkbox" name="brand" id="brand8" />
+                                    <label htmlFor="brand8">Friskers(3994)</label>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                    <div className="categoriesSection">
+                        {/* /men/${item.category}/${item.link} */}
+                        {tshirtData.map((item, index) => {
+                            const firstImageId = item.galleryImages?.[1];
+                            return (
+                                <Link href="#" key={item._id ?? item.id ?? `${item.title}-${index}`} className="categoryCard">
+                                    <div className="img">
+                                        <Image src={`/api/uploads/${firstImageId}`} alt={item.title} width={200} height={200} />
+
+                                        <div className="rating">
+                                            <span>{item.rating} <MdOutlineStarPurple500 /> | {item.reviews}</span>
+                                        </div>
+                                    </div>
+
+                                    <div className="text">
+                                        <h6>{item.brand}</h6>
+                                        <p>{item.title}</p>
+
+                                        <p className="price">
+                                            <b>
+                                                Rs. {item.price}
+                                                <span className="strike"> Rs. {item.originalPrice}</span>
+                                                <span className="discount"> {item.discount}% off</span>
+                                            </b>
+                                        </p>
+                                    </div>
+                                </Link>
+                            )
+                        })}
+                    </div>
+
                 </div>
             </div>
         </div>

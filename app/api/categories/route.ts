@@ -28,3 +28,25 @@ export async function DELETE(req: NextRequest) {
 
     return NextResponse.json({ success: true });
 }
+
+export async function PUT(req: NextRequest) {
+    await connectDB();
+
+    const { id, mainCategory, subCategories } = await req.json();
+
+    if (!id) {
+        return NextResponse.json({ success: false, message: "Category id is required" }, { status: 400 });
+    }
+
+    const updatedCategory = await CategoriesModel.findByIdAndUpdate(
+        id,
+        { mainCategory, subCategories },
+        { new: true }
+    );
+
+    if (!updatedCategory) {
+        return NextResponse.json({ success: false, message: "Category not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true, category: updatedCategory });
+}
