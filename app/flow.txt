@@ -1,0 +1,42 @@
+USER SCHEMA
+EMAIL
+PASSWORD
+PURCHASED_PRODUCTS
+WISHLIST : [{},{},{}]
+BAG :[{}]
+USER_DETAILS : {
+    PINCODE,
+    ADDRESS,
+}
+
+WISHLIST
+IPHONE15{
+    UserId : ObjectId(usr_object_id)
+}
+
+
+PRODUCT{
+    id: ,
+    brand: "Levis",
+    title: "Solid Lounge T-shirt",
+    heading:"",
+    galleryImages: ["/images/tshirt/tshirt3.webp",],
+    sizes : [M,S,X,XXL],
+    desc : ,
+    details : {
+    }
+    rating: 4.4,
+    Seller:"",
+    reviews: 18800,
+    stock:0,
+    price: 577,
+    originalPrice: 649,
+    category: "tshirts",
+    link: "levis",
+    related_products = PRODUCT[ID]
+}
+
+PRIORITY
+1. CREATE A SIMPLE ADMIN PAGE FOR UPLOADING PRODUCT IMAGES AND PRODUCT INFORMATION.
+
+2. CREATE AN MODEL FOR PRODCUT AND POST API ENDPOINT FOR PRODCUT UPLOAD.

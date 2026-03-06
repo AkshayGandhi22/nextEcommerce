@@ -1,26 +1,244 @@
 @import "tailwindcss";
+@import "slick-carousel/slick/slick.css";
+@import "slick-carousel/slick/slick-theme.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+:root {--background: #ffffff;--foreground: #171717;}
+@theme inline {--color-background: var(--background);--color-foreground: var(--foreground);--font-sans: var(--font-geist-sans);--font-mono: var(--font-geist-mono);}
+@media (prefers-color-scheme: dark) {:root {  --background: #0a0a0a;  --foreground: #ededed;}}
+body {background: var(--background);color: var(--foreground);font-family: Arial, Helvetica, sans-serif;}
+
+.container{ max-width: calc(100% - 8%); margin: 0 auto;}
+
+.mainTitle h2{ font-size: 30px; font-weight: 700; margin-bottom: 30px;  }
+.pad100 { padding: 100px 0;}
+.padt10{ padding-top: 10px;}
+
+h4{ font-size: 24px; font-weight: 700; }
+h5{ font-weight: 700; font-size: 18px;}
+h5 span.normal{ font-weight: 400; }
+h6{ font-weight: 700; font-size: 16px;}
+h6 span.normal{ font-weight: 400; }
+
+.navigationSection{ background-color: #fff5f5; }
+.navigationSection .mainLogo a img{ width: 50px;}
+.navigationSection .container{ display: flex; gap: 20px; justify-content: space-between; align-items: center;}
+.navigationSection .navigationMenu{ display: flex; gap: 40px; font-size: 16px; font-weight: 700; position: relative; width: 100%; max-width: 600px; padding: 0 30px;}
+.navigationSection .navigationMenu .navItem {padding: 30px 0;}
+.navigationSection .navigationMenu .navItem .megaMenu{ position: absolute; top: 100%; left: 0; width: 100%; background-color: #f0f0f0; display: flex; opacity: 0; display: none;}
+.navigationSection .navigationMenu .navItem .megaMenu .megaColumn{ flex: 1; padding: 20px;}
+.navigationSection .navigationMenu .navItem .megaMenu .megaColumn:nth-child(even){ background-color: #fff;  }
+.navigationSection .navigationMenu .navItem .megaMenu .megaColumn h4{ font-size: 16px; margin-bottom: 10px; color: palevioletred; }
+.navigationSection .navigationMenu .navItem .megaMenu .megaColumn ul li a{ font-size: 14px; font-weight: 400; opacity: 0.6;}
+.navigationSection .navigationMenu .navItem .megaMenu .megaColumn ul li a:hover{ opacity: 1; }
+.navigationSection .navigationMenu .navItem:hover a + .megaMenu{ opacity: 1; z-index: 2; display: flex; }
+
+.serachForm{  background-color: #ededed; display: flex; align-items: center; width: 100%;  max-width: 600px; }
+.serachForm input{ padding: 10px 20px;  width: 100%;}
+.serachForm input:focus{ outline: none;}
+.serachForm button{ aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center; width: 50px ;}
+.serachForm button img { height: 20px; object-fit: contain; width: fit-content; }
+.profileNav{ display: flex; align-items: center; gap: 20px;}
+.profileNav .profileBtn{  display: flex; cursor: pointer; position: relative; flex-direction: column; gap: 5px; align-items: center; font-size: 12px;  font-weight: 700; padding: 25px 0; }
+.profileNav .profileBtn img{ width: 15px;  }
+.profileNav .profileBtn .profileDopdown{ position: absolute; top: 100%; width: 300px; padding: 25px 20px 15px; background-color: #fff; box-shadow: 0 1px 10px rgba(0,0,0,.08); text-align: left; opacity: 0; display: none;}
+.profileNav .profileBtn:hover .profileDopdown{ opacity: 1; display: block;}
+.profileNav .profileBtn .profileDopdown .loginButton{ display: inline-block; padding: 10px 20px;  margin: 10px 10px 0 0; border: 1px solid #eaeaec; border-radius: 2px; text-align: center; text-transform: uppercase; font-size: 14px; color: #ff3f6c; font-weight: 700;}
+.profileNav .profileBtn .profileDopdown .loginButton:hover{ border-color: #ff3f6c;}
+
+.shopbyCategorySection{ padding: 100px 0;}
+.shopbyCategorySection .categorySection{ display: grid; gap: 30px; grid-template-columns: repeat(5, 1fr);  }
+
+.allCategoriesSection{ margin-top: 20px;}
+.allCategoriesSection{ display: flex; }
+.allCategoriesSection .filterSideBar{ max-width: 252px; flex: 1; border-right: 1px solid #eaeaec; height: fit-content; position: sticky; top: 0;}
+.allCategoriesSection .categoriesSection{ flex: 1;}
+.allCategoriesSection .filterSideBar h5.titleText{ padding-bottom: 10px; border-bottom: 1px solid #eaeaec; }
+.allCategoriesSection .filterSideBar .filterCategories{ padding: 10px 0; border-bottom: 1px solid #eaeaec}
+.allCategoriesSection .filterSideBar .filterCategories h6{ margin-bottom: 10px;}
+.allCategoriesSection .filterSideBar .filterCategories .checkboxField{ display: flex; flex-direction: column; gap: 5px;}
+.allCategoriesSection .filterSideBar .filterCategories .checkboxField .checkboxInput{ display: flex; align-items: center; gap: 5px; }
+.allCategoriesSection .filterSideBar .filterCategories .checkboxField label{ font-size: 14px; }
+.allCategoriesSection .categoriesSection { display: grid; grid-template-columns: repeat(5, 1fr); gap: 40px; padding: 20px; }
+.allCategoriesSection .categoriesSection .categoryCard .img img{ width: 100%; }
+.allCategoriesSection .categoriesSection .categoryCard .img { position: relative;}
+.allCategoriesSection .categoriesSection .categoryCard .img .rating{ position: absolute; left: 10px; bottom: 10px; background-color: #ffffff80; padding: 5px; font-size: 12px; font-weight: 700;}
+.allCategoriesSection .categoriesSection .categoryCard .img .rating span{ display: flex; gap: 5px; align-items: center;}
+.allCategoriesSection .categoriesSection .categoryCard .text{ padding: 10px; }
+.allCategoriesSection .categoriesSection .categoryCard .text p{ font-size: 14px; }
+.allCategoriesSection .categoriesSection .categoryCard .text p.price{ margin-top: 5px; }
+.allCategoriesSection .categoriesSection .categoryCard .text p.price .strike{ text-decoration: line-through; color: gray; font-size: 12px; font-weight: 400;}
+.allCategoriesSection .categoriesSection .categoryCard .text p.price .discount{ color: rgb(255, 76, 76); font-weight: 400;}
+
+.detailspageSection{ display: flex; gap: 40px;  }
+.detailspageSection .sliderSection{ height: fit-content; position: sticky; top: 0;}
+.detailspageSection .sliderSection, .detailspageSection .pageDetails { width: calc(50% - 20px);}
+.detailspageSection .sliderSection img{ width: 100%; }
+
+.productPageSection .detailspageSection{ max-width:1300px;  margin: 0 auto;}
+
+.productDetailsPage .productInfo .brand { font-size: 22px; font-weight: 600;}
+.productDetailsPage hr{ margin: 20px 0; border-color: #888; }
+.productDetailsPage .productInfo .title { color: #666; margin-bottom: 10px;}
+.productDetailsPage .productInfo .ratingBox { display: inline-flex; align-items: center; border: 1px solid #ddd; padding: 5px 10px; border-radius: 4px; gap: 8px;}
+.productDetailsPage .productInfo .ratingBox .divider { width: 1px; height: 14px; background: #ccc;}
+.productDetailsPage .productInfo .ratingBox .ratings { color: #007bff; cursor: pointer;}
+.productDetailsPage .productInfo .priceBox { margin-top: 10px; display: flex; align-items: center; gap: 10px;}
+.productDetailsPage .productInfo .priceBox .price { font-size: 22px; font-weight: bold;}
+.productDetailsPage .productInfo .priceBox .mrp { text-decoration: line-through; color: #888;}
+.productDetailsPage .productInfo .priceBox .discount { color: #ff3f6c; font-weight: 500;}
+.productDetailsPage .productInfo .tax { color: green; font-size: 14px;}
+.productDetailsPage .productInfo .sectionTitle { margin-top: 15px; font-size: 14px; font-weight: bold;}
+.productDetailsPage .productInfo .colors { display: flex; gap: 10px; margin-top: 10px;}
+.productDetailsPage .productInfo .colors img { width: 50px; border: 1px solid #ddd; cursor: pointer;}
+.productDetailsPage .productInfo .sizeHeader { display: flex; justify-content: space-between; margin-top: 15px;}
+.productDetailsPage .productInfo .sizeHeader .sizeChart { color: #ff3f6c; cursor: pointer;}
+.productDetailsPage .productInfo .sizes { display: flex; gap: 10px; margin-top: 10px;}
+.productDetailsPage .productInfo .sizes button { border: 1px solid #ccc; border-radius: 50px; padding: 10px 15px; background: white; cursor: pointer;}
+.productDetailsPage .productInfo .sizes button.active { border: 2px solid #ff3f6c; color: #ff3f6c;}
+.productDetailsPage .productInfo .sizes button span { font-size: 12px; color: #666;}
+.productDetailsPage .productInfo .actions { display: flex; gap: 10px; margin-top: 20px;}
+.productDetailsPage .productInfo .actions .addToBag { flex: 1; background: #ff3f6c; color: white; border: none; padding: 12px; font-weight: bold; cursor: pointer;}
+.productDetailsPage .productInfo .actions .wishlist { flex: 1; border: 1px solid #ccc; background: white; padding: 12px; cursor: pointer;}
+.productDetailsPage .productInfo .seller { margin-top: 15px;}
+.productDetailsPage .productInfo .seller .strike { text-decoration: line-through; color: #888;}
+.productDetailsPage .productInfo .seller .sellerName { color: #ff3f6c;}
+.productDetailsPage .productInfo .seller .moreSeller { color: #ff3f6c; font-size: 14px;}
+.productDetailsPage .productInfo .delivery { margin-top: 20px;}
+.productDetailsPage .productInfo .delivery .pincodeBox { display: flex; gap: 10px; margin-top: 10px;}
+.productDetailsPage .productInfo .delivery .pincodeBox input { flex: 1; padding: 10px; border: 1px solid #ccc;}
+.productDetailsPage .productInfo .delivery .pincodeBox button { padding: 10px 15px; background: white; border: 1px solid #ccc; cursor: pointer;}
+.productDetailsPage .productInfo .delivery .note { font-size: 12px; color: #666; margin-top: 10px;}
+
+.productDetailsSection .productDetailsContainer {max-width: 600px;}
+.productDetailsSection .heading {font-size: 16px;font-weight: bold;margin-bottom: 10px;display: flex;align-items: center;gap: 8px;}
+.productDetailsSection .heading .icon {font-size: 14px;color: #666;}
+.productDetailsSection .description {color: #333;font-size: 14px;line-height: 1.6;margin-bottom: 15px;}
+.productDetailsSection .block {margin-bottom: 20px;}
+.productDetailsSection .block h4 {font-size: 15px;font-weight: bold;margin-bottom: 5px;}
+.productDetailsSection .block p {font-size: 14px;color: #444;margin: 2px 0;}
+.productDetailsSection .specGrid {display: grid;grid-template-columns: 1fr 1fr;gap: 15px 30px;margin-top: 10px;}
+.productDetailsSection .specGrid .specItem {border-bottom: 1px solid #eee;padding-bottom: 8px;}
+.productDetailsSection .specGrid .specItem span {display: block;font-size: 12px;color: #888;}
+.productDetailsSection .specGrid .specItem p {font-size: 14px;font-weight: 500;margin-top: 2px;}
+.cartPage .cartContainer {display: flex;gap: 20px;font-family: Arial, sans-serif;}
+/* LEFT */
+.cartPage .cartLeft {flex: 2;}
+.cartPage .cartLeft .addressBox {display: flex;justify-content: space-between;border: 1px solid #eee;padding: 15px;}
+.cartPage .cartLeft .addressBox button {border: 1px solid #ff3f6c;background: white;color: #ff3f6c;padding: 8px 12px;cursor: pointer;}
+.cartPage .cartLeft .offerBox {border: 1px solid #eee;padding: 15px;margin-top: 15px;}
+.cartPage .cartLeft .offerBox .title {font-weight: bold;}
+.cartPage .cartLeft .offerBox .showMore {color: #ff3f6c;cursor: pointer;}
+.cartPage .cartLeft .cartItem {display: flex;gap: 15px;border: 1px solid #eee;padding: 15px;margin-top: 15px;position: relative;}
+.cartPage .cartLeft .cartItem img {width: 80px;object-fit: cover;}
+.cartPage .cartLeft .cartItem .itemDetails h4 {margin: 0;}
+.cartPage .cartLeft .cartItem .meta {margin: 5px 0;display: flex;gap: 10px;}
+.cartPage .cartLeft .cartItem .price {font-weight: bold;}
+.cartPage .cartLeft .cartItem .strike {text-decoration: line-through;color: #888;}
+.cartPage .cartLeft .cartItem .off {color: #ff3f6c;}
+.cartPage .cartLeft .cartItem .remove {position: absolute;right: 10px;top: 10px;cursor: pointer;}
+.cartPage .cartLeft .wishlistBox {border: 1px solid #eee;padding: 15px;margin-top: 15px;cursor: pointer;}
+/* RIGHT */
+.cartPage .cartRight {flex: 1;}
+.cartPage .cartRight .couponBox {display: flex;justify-content: space-between;border: 1px solid #eee;padding: 15px;}
+.cartPage .cartRight .couponBox button {border: 1px solid #ff3f6c;color: #ff3f6c;background: white;padding: 5px 10px;}
+.cartPage .cartRight .donationBox {border: 1px solid #eee;padding: 15px;margin-top: 15px;}
+.cartPage .cartRight .donationBtns {display: flex;gap: 10px;margin-top: 10px;}
+.cartPage .cartRight .donationBtns button {border: 1px solid #ccc;padding: 5px 10px;background: white;cursor: pointer;}
+.cartPage .cartRight .priceDetails {border: 1px solid #eee;padding: 15px;margin-top: 15px;}
+.cartPage .cartRight .priceDetails .row {display: flex;justify-content: space-between;margin: 8px 0;}
+.cartPage .cartRight .priceDetails .discount {color: green;}
+.cartPage .cartRight .priceDetails .total {font-weight: bold;}
+.cartPage .cartRight .priceDetails .placeOrder {width: 100%;background: #ff3f6c;color: white;border: none;padding: 12px;margin-top: 10px;cursor: pointer;}
+
+.adminPanel {
+  background: #f5f6fa;
+  padding: 40px 0;
+  font-family: Arial;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+.adminPanel .adminPanelContainer {
+  width: 900px;
+  margin: auto;
+  background: #fff;
+  padding: 30px;
+  border-radius: 10px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.adminPanel .adminPanelContainer .formTitle {
+  font-size: 24px;
+  margin-bottom: 20px;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.adminPanel .productForm .formSection {
+  margin-bottom: 30px;
 }
+
+.adminPanel .productForm .formSection h3 {
+  font-size: 18px;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 5px;
+}
+
+.adminPanel .productForm .formGroup {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.adminPanel .productForm .formGroup label {
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.adminPanel .productForm .formGroup input,
+.adminPanel .productForm .formGroup textarea {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.adminPanel .productForm .formGroup textarea {
+  resize: none;
+  height: 100px;
+}
+
+.adminPanel .productForm .formRow {
+  display: flex;
+  gap: 15px;
+}
+
+.adminPanel .productForm .formRow .formGroup {
+  flex: 1;
+}
+
+.adminPanel .productForm .checkboxGroup {
+  display: flex;
+  gap: 15px;
+}
+
+.adminPanel .productForm .checkboxGroup label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 14px; 
+}
+
+.adminPanel .productForm .formSubmit {
+  text-align: right;
+}
+
+.adminPanel .productForm .formSubmit button {
+  background: #000;
+  color: #fff;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.adminPanel .productForm .formSubmit button:hover {
+  background: #333;
+}
+
