@@ -1,10 +1,50 @@
 "use client";
-import Image from 'next/image';
-import React from 'react'
-import { MdOutlineStarPurple500 } from 'react-icons/md';
+
+import Image from "next/image";
+import Link from "next/link";
+import React from "react";
+import { useParams } from "next/navigation";
 import Slider from "react-slick";
 
-function page() {
+type ProductDetails = {
+    _id?: string;
+    brand: string;
+    title: string;
+    heading?: string;
+    galleryImages?: string[];
+    sizes?: string[];
+    desc?: string;
+    details?: Record<string, unknown>;
+    rating: number;
+    Seller?: string;
+    seller?: string;
+    reviews: number;
+    stock: number;
+    price: number;
+    originalPrice?: number;
+    discount?: number;
+};
+
+type Category = {
+    mainCategory: string;
+    subCategories: {
+        name: string;
+        subSubCategories?: string[];
+    }[];
+};
+
+const normalizeParam = (param: string | string[] | undefined) =>
+    Array.isArray(param) ? param[0] : param ?? "";
+
+const toSlug = (value: string) => value.toLowerCase().trim().replace(/\s+/g, "-");
+
+const extractObjectId = (value: string) => {
+    const parts = value.split("-");
+    const candidate = parts[parts.length - 1] ?? "";
+    return /^[a-fA-F0-9]{24}$/.test(candidate) ? candidate : "";
+};
+
+function Page() {
     const settings = {
         dots: false,
         infinite: true,
@@ -14,195 +54,243 @@ function page() {
         autoplay: true,
         autoplaySpeed: 2000,
     };
+
+    const params = useParams();
+    const slug = normalizeParam(params?.slug);
+    const productSlug = normalizeParam(params?.productSlug);
+    const productDetailsSlug = normalizeParam(params?.productDetailsSlug);
+
+    const [product, setProduct] = React.useState<ProductDetails | null>(null);
+    const [selectedSize, setSelectedSize] = React.useState<string>("");
+    const [loading, setLoading] = React.useState(true);
+    const [isRouteValid, setIsRouteValid] = React.useState(false);
+
+    React.useEffect(() => {
+        const fetchProduct = async () => {
+            try {
+                const [categoriesResponse, productsResponse] = await Promise.all([
+                    fetch("/api/categories"),
+                    fetch("/api/product-upload"),
+                ]);
+
+                const categories: Category[] = await categoriesResponse.json();
+                const data: ProductDetails[] = await productsResponse.json();
+                const isValid = categories.some(
+                    (category) =>
+                        toSlug(category.mainCategory) === "men" &&
+                        category.subCategories.some(
+                            (subCategory) =>
+                                toSlug(subCategory.name) === slug &&
+                                (subCategory.subSubCategories ?? []).some(
+                                    (subSubCategory) => toSlug(subSubCategory) === productSlug
+                                )
+                        )
+                );
+
+                setIsRouteValid(isValid);
+
+                if (!isValid) {
+                    setProduct(null);
+                    return;
+                }
+
+                const byId = extractObjectId(productDetailsSlug);
+
+                const found = data.find((item) => {
+                    if (byId && item._id === byId) {
+                        return true;
+                    }
+                    const currentSlug = item.title ? toSlug(item.title) : "";
+                    return currentSlug === productDetailsSlug;
+                });
+
+                setProduct(found ?? null);
+                if (found?.sizes?.length) {
+                    setSelectedSize(found.sizes[0]);
+                }
+            } catch (error) {
+                console.error("Error fetching product details:", error);
+                setProduct(null);
+                setIsRouteValid(false);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProduct();
+    }, [slug, productSlug, productDetailsSlug]);
+
+    if (loading) {
+        return <div className="pad100 container">Loading product details...</div>;
+    }
+
+    if (!isRouteValid) {
+        return (
+            <div className="pad100 container">
+                <h2>Page not found</h2>
+                <Link href="/">Back to home</Link>
+            </div>
+        );
+    }
+
+    if (!product) {
+        return (
+            <div className="pad100 container">
+                <h2>Product not found</h2>
+                <Link href={`/men/${slug}/${productSlug}`}>Back to products</Link>
+            </div>
+        );
+    }
+
+    const imageIds = product.galleryImages?.length
+        ? product.galleryImages
+        : ["fallback-image"];
+    const sellerName = product.seller ?? product.Seller ?? "Not available";
+    const detailsEntries = Object.entries(product.details ?? {});
+    const hasPriceDrop =
+        typeof product.originalPrice === "number" && product.originalPrice > product.price;
+
     return (
-        <div className='pad100 productPageSection'>
+        <div className="pad100 productPageSection">
             <div className="container">
                 <div className="detailspageSection">
                     <div className="sliderSection">
                         <Slider {...settings}>
-                            <div>
-                                <div className="sliderImg">
-                                    <Image src="/images/tshirt/tshirt1.webp" alt='tshirt' width={500} height={500} />
+                            {imageIds.map((imageId, index) => (
+                                <div key={`${imageId}-${index}`}>
+                                    <div className="sliderImg">
+                                        <Image
+                                            src={
+                                                imageId === "fallback-image"
+                                                    ? "/images/tshirt/tshirt1.webp"
+                                                    : `/api/uploads/${imageId}`
+                                            }
+                                            alt={product.title}
+                                            width={500}
+                                            height={500}
+                                        />
+                                    </div>
                                 </div>
-                            </div>
-                            <div>
-                                <div className="sliderImg">
-                                    <Image src="/images/tshirt/tshirt2.webp" alt='tshirt' width={500} height={500} />
-                                </div>
-                            </div>
-                            <div>
-                                <div className="sliderImg">
-                                    <Image src="/images/tshirt/tshirt3.webp" alt='tshirt' width={500} height={500} />
-                                </div>
-                            </div>
-                            <div>
-                                <div className="sliderImg">
-                                    <Image src="/images/tshirt/tshirt4.webp" alt='tshirt' width={500} height={500} />
-                                </div>
-                            </div>
-                            <div>
-                                <div className="sliderImg">
-                                    <Image src="/images/tshirt/tshirt5.webp" alt='tshirt' width={500} height={500} />
-                                </div>
-                            </div>
+                            ))}
                         </Slider>
                     </div>
 
                     <div className="pageDetails">
                         <div className="productDetailsPage">
                             <div className="productInfo">
-
-                                <h2 className="brand">U.S. Polo Assn.</h2>
-                                <p className="title">Men Pure Cotton Comfort Fit Lounge T-Shirt</p>
+                                <h2 className="brand">{product.brand}</h2>
+                                <p className="title">{product.title}</p>
 
                                 <div className="ratingBox">
-                                    <span>4.4 ★</span>
+                                    <span>{product.rating} *</span>
                                     <span className="divider"></span>
-                                    <span className="ratings">198 Ratings</span>
+                                    <span className="ratings">{product.reviews} Ratings</span>
                                 </div>
 
                                 <hr />
 
                                 <div className="priceBox">
-                                    <span className="price">₹806</span>
-                                    <span className="mrp">₹849</span>
-                                    <span className="discount">(5% OFF)</span>
+                                    <span className="price">Rs. {product.price}</span>
+                                    {hasPriceDrop ? (
+                                        <span className="mrp">Rs. {product.originalPrice}</span>
+                                    ) : null}
+                                    {product.discount ? (
+                                        <span className="discount">({product.discount}% OFF)</span>
+                                    ) : null}
                                 </div>
 
                                 <p className="tax">inclusive of all taxes</p>
 
-                                <h4 className="sectionTitle">MORE COLORS</h4>
-                                <div className="colors">
-                                    <img src="/images/tshirt/tshirt1.webp" />
-                                    <img src="/images/tshirt/tshirt2.webp" />
-                                    <img src="/images/tshirt/tshirt3.webp" />
-                                </div>
-
                                 <div className="sizeHeader">
                                     <h5>SELECT SIZE</h5>
-                                    <span className="sizeChart">SIZE CHART </span>
+                                    <span className="sizeChart">SIZE CHART</span>
                                 </div>
 
                                 <div className="sizes">
-                                    <button>S<br /><span>Rs. 806</span></button>
-                                    <button className="active">M<br /><span>Rs. 806</span></button>
-                                    <button>L<br /><span>Rs. 806</span></button>
-                                    <button>XL<br /><span>Rs. 806</span></button>
-                                    <button>XXL<br /><span>Rs. 807</span></button>
+                                    {(product.sizes ?? []).map((size) => (
+                                        <button
+                                            key={size}
+                                            type="button"
+                                            className={selectedSize === size ? "active" : ""}
+                                            onClick={() => setSelectedSize(size)}
+                                        >
+                                            {size}
+                                            <br />
+                                            <span>Rs. {product.price}</span>
+                                        </button>
+                                    ))}
                                 </div>
 
                                 <div className="actions">
                                     <button className="addToBag">ADD TO BAG</button>
-                                    <button className="wishlist">♡ WISHLIST</button>
+                                    <button className="wishlist">WISHLIST</button>
                                 </div>
 
                                 <hr />
 
                                 <div className="seller">
-                                    <p>₹ 806 <span className="strike">₹ 849</span> <span className="discount">(5% OFF)</span></p>
-                                    <p>Seller: <span className="sellerName">Supercom Net</span></p>
-                                    <p className="moreSeller">1 more seller available</p>
+                                    <p>
+                                        Rs. {product.price}{" "}
+                                        {hasPriceDrop ? (
+                                            <span className="strike">Rs. {product.originalPrice}</span>
+                                        ) : null}{" "}
+                                        {product.discount ? (
+                                            <span className="discount">({product.discount}% OFF)</span>
+                                        ) : null}
+                                    </p>
+                                    <p>
+                                        Seller: <span className="sellerName">{sellerName}</span>
+                                    </p>
                                 </div>
 
                                 <div className="delivery">
                                     <h4>DELIVERY OPTIONS</h4>
                                     <div className="pincodeBox">
                                         <input type="text" placeholder="Enter pincode" />
-                                        <button>Check</button>
+                                        <button type="button">Check</button>
                                     </div>
                                     <p className="note">
-                                        Please enter PIN code to check delivery time & Pay on Delivery Availability
+                                        Please enter PIN code to check delivery time and payment availability
                                     </p>
                                 </div>
-
                             </div>
+
                             <hr />
+
                             <div className="productDetailsSection">
                                 <div className="productDetailsContainer">
-
-                                    <h3 className="heading">
-                                        PRODUCT DETAILS <span className="icon">📋</span>
-                                    </h3>
+                                    <h3 className="heading">PRODUCT DETAILS</h3>
 
                                     <p className="description">
-                                        Teal-green solid lounge t-shirt, has a round neck and short sleeves with slip-on closure
+                                        {product.desc || product.heading || "No description available."}
                                     </p>
 
-                                    <div className="block">
-                                        <h4>Size & Fit</h4>
-                                        <p>The model (height 6') is wearing a size M</p>
-                                    </div>
-
-                                    <div className="block">
-                                        <h4>Material & Care</h4>
-                                        <p>100% Cotton</p>
-                                        <p>Machine wash</p>
-                                    </div>
-
-                                    <div className="block">
-                                        <h4>Specifications</h4>
-
-                                        <div className="specGrid">
-
-                                            <div className="specItem">
-                                                <span>Fabric</span>
-                                                <p>Cotton</p>
+                                    {detailsEntries.length > 0 ? (
+                                        <div className="block">
+                                            <h4>Specifications</h4>
+                                            <div className="specGrid">
+                                                {detailsEntries.map(([key, value]) => (
+                                                    <div className="specItem" key={key}>
+                                                        <span>{key}</span>
+                                                        <p>{String(value)}</p>
+                                                    </div>
+                                                ))}
                                             </div>
-
-                                            <div className="specItem">
-                                                <span>Neck</span>
-                                                <p>Round Neck</p>
-                                            </div>
-
-                                            <div className="specItem">
-                                                <span>Net Quantity</span>
-                                                <p>1</p>
-                                            </div>
-
-                                            <div className="specItem">
-                                                <span>Net Quantity Unit</span>
-                                                <p>Piece</p>
-                                            </div>
-
-                                            <div className="specItem">
-                                                <span>Pattern</span>
-                                                <p>Solid</p>
-                                            </div>
-
-                                            <div className="specItem">
-                                                <span>Sleeve Length</span>
-                                                <p>Short Sleeves</p>
-                                            </div>
-
-                                            <div className="specItem">
-                                                <span>Sustainable</span>
-                                                <p>Regular</p>
-                                            </div>
-
-                                            <div className="specItem">
-                                                <span>Type</span>
-                                                <p>Regular</p>
-                                            </div>
-
-                                            <div className="specItem">
-                                                <span>Wash Care</span>
-                                                <p>Machine Wash</p>
-                                            </div>
-
                                         </div>
-                                    </div>
+                                    ) : null}
 
+                                    <div className="block">
+                                        <h4>Stock</h4>
+                                        <p>{product.stock > 0 ? `${product.stock} available` : "Out of stock"}</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-
-
-
                     </div>
                 </div>
             </div>
         </div>
-    )
+    );
 }
 
-export default page
+export default Page;

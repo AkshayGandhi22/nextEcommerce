@@ -2,28 +2,95 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import React, { useState } from 'react'
-import { tshirt } from "./tshirt"
+import { useParams } from 'next/navigation';
 import { MdOutlineStarPurple500 } from "react-icons/md";
 
-function page() {
+type ProductItem = {
+    _id?: string;
+    brand: string;
+    title: string;
+    galleryImages?: string[];
+    rating: number;
+    reviews: number;
+    price: number;
+    originalPrice?: number;
+    discount?: number;
+};
 
-    const [tshirtData, setTshirtData] = useState<any[]>([]);
+type Category = {
+    mainCategory: string;
+    subCategories: {
+        name: string;
+        subSubCategories?: string[];
+    }[];
+};
 
-    const fetchTshirtData = async () => {
-        try {
-            const response = await fetch('/api/product-upload');
-            const data = await response.json();
-            setTshirtData(data);
-        } catch (error) {
-            console.error("Error fetching t-shirt data:", error);
-        }
-    };
+const toSlug = (value: string) => value.toLowerCase().trim().replace(/\s+/g, "-");
+const normalizeParam = (param: string | string[] | undefined) =>
+    Array.isArray(param) ? param[0] : param ?? "";
+
+function Page() {
+    const params = useParams();
+    const slug = normalizeParam(params?.slug);
+    const productSlug = normalizeParam(params?.productSlug);
+
+    const [tshirtData, setTshirtData] = useState<ProductItem[]>([]);
+    const [isRouteValid, setIsRouteValid] = useState(false);
+    const [routeChecked, setRouteChecked] = useState(false);
 
     console.log("Fetched T-shirt Data:", tshirtData);
 
     React.useEffect(() => {
-        fetchTshirtData();
-    }, []);
+        const validateRouteAndFetch = async () => {
+            try {
+                const categoriesResponse = await fetch("/api/categories");
+                const categories: Category[] = await categoriesResponse.json();
+
+                const isValid = categories.some(
+                    (category) =>
+                        toSlug(category.mainCategory) === "men" &&
+                        category.subCategories.some(
+                            (subCategory) =>
+                                toSlug(subCategory.name) === slug &&
+                                (subCategory.subSubCategories ?? []).some(
+                                    (subSubCategory) => toSlug(subSubCategory) === productSlug
+                                )
+                        )
+                );
+
+                setIsRouteValid(isValid);
+
+                if (!isValid) {
+                    setTshirtData([]);
+                    return;
+                }
+
+                const response = await fetch("/api/product-upload");
+                const data = await response.json();
+                setTshirtData(data);
+            } catch (error) {
+                console.error("Error fetching t-shirt data:", error);
+                setIsRouteValid(false);
+            } finally {
+                setRouteChecked(true);
+            }
+        };
+
+        validateRouteAndFetch();
+    }, [slug, productSlug]);
+
+    if (!routeChecked) {
+        return <div className="pad100 container">Loading products...</div>;
+    }
+
+    if (!isRouteValid) {
+        return (
+            <div className="pad100 container">
+                <h2>Page not found</h2>
+                <Link href="/">Back to home</Link>
+            </div>
+        );
+    }
 
     return (
         <div className='padt10'>
@@ -86,13 +153,25 @@ function page() {
                         </div>
                     </div>
                     <div className="categoriesSection">
-                        {/* /men/${item.category}/${item.link} */}
                         {tshirtData.map((item, index) => {
-                            const firstImageId = item.galleryImages?.[1];
+                            const firstImageId = item.galleryImages?.[0];
+                            const productDetailsSlug = item._id
+                                ? `${toSlug(item.title)}-${item._id}`
+                                : toSlug(item.title);
+
                             return (
-                                <Link href="#" key={item._id ?? item.id ?? `${item.title}-${index}`} className="categoryCard">
+                                <Link
+                                    href={`/men/${slug}/${productSlug}/${productDetailsSlug}`}
+                                    key={item._id ?? `${item.title}-${index}`}
+                                    className="categoryCard"
+                                >
                                     <div className="img">
-                                        <Image src={`/api/uploads/${firstImageId}`} alt={item.title} width={200} height={200} />
+                                        <Image
+                                            src={firstImageId ? `/api/uploads/${firstImageId}` : "/images/tshirt/tshirt1.webp"}
+                                            alt={item.title}
+                                            width={200}
+                                            height={200}
+                                        />
 
                                         <div className="rating">
                                             <span>{item.rating} <MdOutlineStarPurple500 /> | {item.reviews}</span>
@@ -106,8 +185,8 @@ function page() {
                                         <p className="price">
                                             <b>
                                                 Rs. {item.price}
-                                                <span className="strike"> Rs. {item.originalPrice}</span>
-                                                <span className="discount"> {item.discount}% off</span>
+                                                {item.originalPrice ? <span className="strike"> Rs. {item.originalPrice}</span> : null}
+                                                {item.discount ? <span className="discount"> {item.discount}% off</span> : null}
                                             </b>
                                         </p>
                                     </div>
@@ -122,4 +201,4 @@ function page() {
     )
 }
 
-export default page
+export default Page
