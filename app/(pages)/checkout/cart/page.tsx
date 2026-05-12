@@ -24,7 +24,7 @@ function page() {
                         </div>
 
                         <div className="cartItem">
-                            <input type="checkbox" checked />
+                            <input type="checkbox"  />
 
                             <Image src="/images/tshirt/tshirt1.webp" alt="product" width={100} height={100} />
 

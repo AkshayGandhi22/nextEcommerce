@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { megaMenu } from "./megaMenu";
 import { useGet } from "@/app/_lib/hooks/useGet";
+import { useSession } from "next-auth/react";
 
 type Category = {
     _id: string;
@@ -22,6 +23,7 @@ const toSlug = (value: string) => value.toLowerCase().trim().replace(/\s+/g, "-"
 
 function Header() {
     const { data: categories, loading } = useGet<Category[]>("/api/categories", []);
+    const { data: session, status } = useSession();
 
     const dynamicMenu: HeaderMenu[] = categories.map((category) => ({
         id: category._id,
@@ -82,14 +84,24 @@ function Header() {
                     <button className="profileBtn">
                         <Image src="/images/profile.png" alt="Profile" width={100} height={100} /> Profile
                         <div className="profileDopdown">
-                            <div className="loginSection">
-                                <p>
-                                    <b>Welcome</b> <br /> To access account and manage orders
-                                </p>
-                                <Link href="/signup" className="loginButton">
-                                    Login / Signup
-                                </Link>
-                            </div>
+
+                            {session && status === "authenticated" ? (
+                                <div className="profileLinks">
+                                    <Link href="/logout" className="loginButton">
+                                        Logout
+                                    </Link>
+                                </div>
+                            ) : (
+                                <div className="loginSection">
+                                    <p>
+                                        <b>Welcome</b> <br /> To access account and manage orders
+                                    </p>
+
+                                    <Link href="/signup" className="loginButton">
+                                        Login / Signup
+                                    </Link>
+                                </div>
+                            )}
                         </div>
                     </button>
                     <button className="profileBtn">
